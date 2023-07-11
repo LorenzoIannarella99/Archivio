@@ -392,7 +392,6 @@ void *gestore(void *arg){
             // prima di stampare e far terminare il programma,il thread gestore attende la terminazione del capolettore e del caposcrittore 
             xpthread_join(*(d->fine_cs),NULL,QUI);
             xpthread_join(*(d->fine_cl),NULL,QUI);
-            //fprintf(stdout,"\n numero di stringhe distinte è %d\n",*(d->numero_stringhe));
             char b[16]=STATIC_INIZIALIZER;
             int lung=0;
             unsigned int num_s = (unsigned int) *(d->numero_stringhe); 
@@ -504,7 +503,6 @@ int main(int argc, char *argv[]){
     dcs.num_scritt=scrit;
     dcs.sem_data_items=&sem_data_items_s;
     dcs.sem_free_slots=&sem_free_slots_s;
-    //puts("trhead_caposcrittore lanciato");
     xpthread_create(&cap_scritt,NULL,capo_scrittore_body,&dcs,QUI);
 
 //inizializzo e lancio il thread capo_lettore
@@ -516,7 +514,6 @@ int main(int argc, char *argv[]){
     dcl.num_lett=let;
     dcl.sem_data_items=&sem_data_items_l;
     dcl.sem_free_slots=&sem_free_slots_l;
-    //puts("thread capolettore lanciato");
     xpthread_create(&cap_lett,NULL,capo_let_body,&dcl,QUI);
     
 //inizializzo i thread lettori 
