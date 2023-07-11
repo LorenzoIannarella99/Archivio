@@ -40,11 +40,10 @@ Ci sono due tipi di client, uno di tipo 'A' e uno di tipo 'B'. Il client di tipo
 Il server Python utilizza socket per la comunicazione di rete e named pipes per la comunicazione con il programma C archivio .
 
 ### 1. server
-il server inizialmente lancia il programma archivio usando ****subprocess.Popen**** poi esegue il maai, il main effettuaun controllo sull'esistenza delle npipe(capolet,caposc) se esse non esistono le crea e le apre in scrittura e poi usa ****concurrent.futures.ThreadPoolExecutor()****
-per definire una pool di thread per gestire le varie connessioni , ciò avviene mediante la funzione ****gestisci_connessione()**** che riceve un singolo byte per capire che tipo di connessione e quindi di gestirla diversamente ,nel caso di connessione di tipo B ho definito un semaforo per far avvenire correttamente le scritture nella pipe in qunato più thread scrivono nella npipe caposc.
-ho definito una variabile di lock per per incrementare correttamente il numero di bytes che il server con connessione di tipo B gestita da più thread scrive nella npipe.
+il server inizialmente lancia il programma archivio usando ****subprocess.Popen**** poi esegue il main, il main effettua un controllo sull'esistenza delle npipe(capolet,caposc) se esse non esistono le crea e le apre in scrittura e poi usa ****concurrent.futures.ThreadPoolExecutor()****
+per definire una pool di thread per gestire le varie connessioni , ciò avviene mediante la funzione ****gestisci_connessione()**** che riceve un singolo byte per capire che tipo di connessione e quindi di gestirla diversamente ,nel caso di connessione di tipo B ho definito un semaforo per far avvenire correttamente le scritture nella pipe in quanto più thread scrivono nella npipe caposc.
 
 ### 2.client tipo2
 il client di tipo2 comunica con il server mediante connessione di tipo B ,usa 
 ****concurrent.futures.ThreadPoolExecutor()**** per definire dei thread dove ognuno di essi gestisce un file dal quale legge e invia ciò che legge al server ,inviando prima la lunghezza e poi il la sequenza di bytes .
-ho usato una variabile global con una lock per contare i thread che finivano il loro operato in modo tale che l'ultimo che finiva di leggere e comunicare con il server, prima di terminare inviava un'ultima lunghezza "0" in modo da far capire al server la fine della comunicazione con il client di tipo2.
+
