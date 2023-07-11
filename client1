@@ -1,0 +1,30 @@
+#! /usr/bin/env python3
+import struct,socket,sys
+
+HOST = "127.0.0.1"  
+PORT =57537
+def main(file,host=HOST,port=PORT):
+    with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
+        s.connect((host,port))
+        s.sendall(b'A')
+        with open(file,"r") as f:
+            for stringa in f:
+                bytes_stringa=stringa.encode()
+                if len(bytes_stringa)==1:
+                    continue
+                lung_string_bytes=len(bytes_stringa)
+                s.sendall(struct.pack("!i",lung_string_bytes))
+                s.sendall(bytes_stringa)
+        s.sendall(struct.pack("!i",0)) #comunica al server che il client ha finito di leggere dal file 
+        s.shutdown(socket.SHUT_RDWR)
+
+
+
+if len(sys.argv)==2:
+  main(sys.argv[1],HOST,PORT)
+elif len(sys.argv)==3:
+  main(sys.argv[1], sys.argv[2],PORT)
+elif len(sys.argv)==4:
+  main(sys.argv[1], sys.argv[2], int(sys.argv[3])) 
+else:
+  print("Uso:\n\t %s [file] [host] [port]" % sys.argv[0])
