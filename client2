@@ -16,10 +16,6 @@ def main(file,host=HOST,port=PORT):
                     continue
                 s.sendall(struct.pack("!i",len(bytes_stringa)))
                 s.sendall(bytes_stringa)
-        global fine     
-        with lock:
-            fine+=1
-        if fine == len(args.input_file):
             s.sendall(struct.pack("!i",0))
         s.shutdown(socket.SHUT_RDWR)
 
@@ -35,35 +31,7 @@ if __name__ == '__main__':
     parser.add_argument('-p',help='port',type=int,default=PORT)
     args=parser.parse_args()
     assert len(args.input_file)>0 ,"Il numero di file che prende in input deve essere maggiore o uguale ad 1"
-    fine=0
-    lock=threading.Lock()
     with concurrent.futures.ThreadPoolExecutor(max_workers=len(args.input_file)) as executor:
         for file in args.input_file:
             executor.submit(main,file,args.a,args.p)
             
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
