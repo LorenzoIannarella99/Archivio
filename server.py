@@ -81,13 +81,14 @@ def gestisci_connessione(conn,addr,fd1,fd2):
 
            break        
         bytes_lung_seq=struct.pack("<i",lunghezza)
+        bytes_scritti_B+=len(bytes_lung_seq)
         sem.acquire()
         os.write(fd2,bytes_lung_seq)
         data_seq=recv_all(conn,lunghezza)
-        bytes_scritti_B+=len(data_seq)
         pacco=struct.pack(f'{len(data_seq)}s',data_seq)
         os.write(fd2,pacco)
         sem.release()
+        bytes_scritti_B+=len(data_seq)
       return
 
 def recv_all(conn,n):
