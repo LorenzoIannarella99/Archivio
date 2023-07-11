@@ -125,9 +125,9 @@ if __name__ == '__main__':
       p_archivio=subprocess.Popen(["valgrind","--leak-check=full", 
                         "--show-leak-kinds=all", 
                         "--log-file=valgrind-%p.log", 
-                        "./archivio.out", f"{args.r}",f"{args.w}"])
+                        "./archivio", f"{args.r}",f"{args.w}"])
    else :
-      p_archivio=subprocess.Popen(["./archivio.out", f"{args.r}",f"{args.w}"])
+      p_archivio=subprocess.Popen(["./archivio", f"{args.r}",f"{args.w}"])
    sem=threading.Semaphore(1)
    bytes_scritti_A=0
    bytes_scritti_B=0
