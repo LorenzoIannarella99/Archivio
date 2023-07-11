@@ -48,16 +48,16 @@ def main(t,r,w,host=HOST,port=PORT):
            
 
 def gestisci_connessione(conn,addr,fd1,fd2):
-   global bytes_scritti_A
+   bytes_scritti_A=0
    tipo_client=recv_all(conn,1)
    if tipo_client.decode()=='A':
-      logging.debug(f"{threading.current_thread().name} contattato da {addr} con connessione di tipo A")
-      logging.debug("il server ha aperto in scrittura la pipe capolet")
+      logging.info(f"{threading.current_thread().name} contattato da {addr} con connessione di tipo A")
       while True:
         lung_seq=recv_all(conn,4)
         lunghezza=struct.unpack("!i",lung_seq)[0]
+        assert lunghezza<=2048,"non è possibile trasferire questa sequenza di bytes"
         if lunghezza==0:
-           logging.debug(f"con connessione di tipo A il server ha scritto nella pipe capolet {bytes_scritti_A+4}")
+           logging.info(f"{threading.current_thread().name} contattato da {addr} con connessione di tipo A il server ha scritto nella pipe capolet {bytes_scritti_A}")
            break
         bytes_lung_seq=struct.pack("<i",lunghezza)
         bytes_scritti_A+=4
@@ -66,26 +66,21 @@ def gestisci_connessione(conn,addr,fd1,fd2):
         bytes_scritti_A+=len(data_seq)
         pacco=struct.pack(f'{len(data_seq)}s',data_seq)
         os.write(fd1,pacco)
-      bytes_scritti_A=0
       return 
 
 
    elif tipo_client.decode()=='B':
-      global bytes_scritti_B
-      logging.debug(f"{threading.current_thread().name} contattato da {addr} con connessione di tipo B")
-      logging.debug("il server ha aperto in scrittura la pipe caposc")
+      bytes_scritti_B=0
+      logging.info(f"{threading.current_thread().name} contattato da {addr} con connessione di tipo B")
       while True:
         lung_seq=recv_all(conn,4)
-        lunghezza=struct.unpack("!i",lung_seq)[0] 
-        assert lunghezza<=2048,"non è possibile trasferire questa sequenza di bytes"
-        #logging.debug(f"{threading.current_thread().name} ha ricevuto che la lunghezza della stringa è {lunghezza}")
+        lunghezza=struct.unpack("!i",lung_seq)[0]
+        assert lunghezza<=2048,"non è possibile trasferire questa sequenza di bytes" 
         if lunghezza==0:
-           logging.debug(f"con connessione di tipo B il server ha scritto nella pipe caposc {bytes_scritti_B+4}")
+           logging.info(f"{threading.current_thread().name} contattato da {addr} con connessione di tipo B il server ha scritto nella pipe caposc {bytes_scritti_B}")
 
            break        
         bytes_lung_seq=struct.pack("<i",lunghezza)
-        with lock:
-         bytes_scritti_B+=4
         sem.acquire()
         os.write(fd2,bytes_lung_seq)
         data_seq=recv_all(conn,lunghezza)
@@ -93,8 +88,6 @@ def gestisci_connessione(conn,addr,fd1,fd2):
         pacco=struct.pack(f'{len(data_seq)}s',data_seq)
         os.write(fd2,pacco)
         sem.release()
-      #os.close(fd2)
-      bytes_scritti_B=0
       return
 
 def recv_all(conn,n):
@@ -129,8 +122,5 @@ if __name__ == '__main__':
    else :
       p_archivio=subprocess.Popen(["./archivio", f"{args.r}",f"{args.w}"])
    sem=threading.Semaphore(1)
-   bytes_scritti_A=0
-   bytes_scritti_B=0
-   lock=threading.Lock()
    main(args.t,args.r,args.w,args.a,args.p)   
 
