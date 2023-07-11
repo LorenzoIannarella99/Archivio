@@ -120,8 +120,6 @@ if __name__ == '__main__':
    args = parser.parse_args()
 
    logging.debug(f"Il server lancia il programma archivio con {args.r} lettori ed {args.w} scrittori ")
-   client1=os.path.join(os.getcwd(),'client1')
-   client2=os.path.join(os.getcwd(),'client2')
    assert args.r>0 and args.w>0, "I valori 'r' e 'w' devono essere positivi" 
    if args.v:
       p_archivio=subprocess.Popen(["valgrind","--leak-check=full", 
