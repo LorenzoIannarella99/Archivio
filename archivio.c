@@ -358,19 +358,9 @@ void *gestore(void *arg){
     sigset_t mask;
     sigfillset(&mask);
     int s;
-    char gestore[41]="Thread gestore svegliato dal segnale   \n";
     while(true){
         int e = sigwait(&mask,&s);
         if(e!=0) perror("errore sigwait");
-        if (s<10){
-            gestore[41-3]=(s%10)+'0';
-        }else if(s>=10){
-            gestore[41-3]=(s%10)+'0';
-            int s1=s/10;
-            gestore[41-2]=(s1%10)+'0';
-        }
-        ssize_t e_write= write(STDOUT_FILENO,gestore,41);
-        if(e_write==-1) xtermina("write fallita",QUI);
        
         if(s==SIGINT){ 
             char b[16]=STATIC_INIZIALIZER;
