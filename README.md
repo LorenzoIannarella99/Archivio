@@ -39,7 +39,7 @@ The manager thread captures all signals because, in the main thread, all signals
 When the SIGINT signal is received, the manager thread uses the function ***write*** (since it is async-signal-safe) to print the number of distinct strings in the hash table to stderr.  
 Upon receiving the SIGTERM signal, the manager thread blocks all signals with ***pthread_sigmask(SIG_BLOCK, &mask, NULL)*** to avoid interruption and waits for the termination of the head reader and head writer threads using two ***xpthread_join()*** calls before printing the number of distinct strings in the hash table, deallocating the hash table, and terminating the program.
 
-### ** Python Part**
+### **Python Part**
 
 The Python code implements a server that manages network connections from various clients using the **concurrent.futures** module to handle a thread pool, where each thread manages a client connection.
 
